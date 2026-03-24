@@ -4,5 +4,6 @@
     <label>toughness</label>
     <skillLabel>toughness</skillLabel>
     <description>A measure of a pawn's resilience, reducing damage and bleed.</description>
+	<listOrder>105</listOrder>
   </SkillDef>
 </Defs>

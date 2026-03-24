@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <RulePackDef>
+    <defName>VSIE_TeachingUtility</defName>
+    <rulePack>
+		<rulesStrings>
+			<li>TeachingUtilityDummy1 -> dummy</li>
+		</rulesStrings>
+      <rulesFiles>
+		<li>ThoughnessTopic->Words/TeachingWords/ToughnessSkill</li>
+      </rulesFiles>
+	   </rulePack>
+  </RulePackDef>
+</Defs>
