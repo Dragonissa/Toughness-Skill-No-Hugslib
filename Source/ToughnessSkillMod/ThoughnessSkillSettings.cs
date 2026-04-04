@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Verse;
+﻿using Verse;
 
 namespace ToughnessSkillMod;
 
@@ -14,6 +9,9 @@ public class ThoughnessSkillSettings : ModSettings
     public int breakpoint = 5;
     public float slopeEarly = 0.075f;
     public float maxReduction = 0.5f;
+    public bool patchColonists = true;
+    public bool patchFriendlyPawns = true;
+    public bool patchHostilePawns = true;
 
     public override void ExposeData()
     {
@@ -23,6 +21,9 @@ public class ThoughnessSkillSettings : ModSettings
         Scribe_Values.Look(ref breakpoint, "breakpoint", 5);
         Scribe_Values.Look(ref slopeEarly, "slopeEarly", 0.075f);
         Scribe_Values.Look(ref maxReduction, "maxReduction", 0.5f);
+        Scribe_Values.Look(ref patchColonists, "patchColonists", true);
+        Scribe_Values.Look(ref patchFriendlyPawns, "patchFriendlyPawns", true);
+        Scribe_Values.Look(ref patchHostilePawns, "patchHostilePawns", true);
     }
 }
 

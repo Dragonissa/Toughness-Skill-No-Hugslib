@@ -12,8 +12,8 @@ public class StatPart_ToughnessDamage : StatPart
 			CompToughnessCache compToughnessCache = pawn.TryGetComp<CompToughnessCache>();
 			if (compToughnessCache != null)
 			{
-				compToughnessCache.UpdateCache(pawn);
-				val *= compToughnessCache.cachedDamageFactor;
+                compToughnessCache.UpdateCache(pawn, false);
+                val *= compToughnessCache.cachedDamageFactor;
 			}
 		}
 	}
@@ -34,7 +34,7 @@ public class StatPart_ToughnessDamage : StatPart
 			return null;
 		}
 		CompToughnessCache compToughnessCache = pawn.TryGetComp<CompToughnessCache>();
-		compToughnessCache?.UpdateCache(pawn);
+		compToughnessCache?.UpdateCache(pawn, false);
 		float f = compToughnessCache?.cachedDamageFactor ?? 1f;
 		return "Toughness skill: x" + f.ToStringPercent() + " damage taken";
 	}

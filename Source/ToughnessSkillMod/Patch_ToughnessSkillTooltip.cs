@@ -15,7 +15,9 @@ LoadedModManager.GetMod<ToughnessSkillMod>()?.GetSettings<ThoughnessSkillSetting
 	{
 		if (!(sk.def.defName != "Toughness") && sk.Pawn != null)
 		{
-			int level = sk.Level;
+            Pawn pawn = sk.Pawn;
+
+            int level = sk.Level;
 			float num;
 			if (level <= (int)Settings.breakpoint)
 			{
@@ -27,7 +29,28 @@ LoadedModManager.GetMod<ToughnessSkillMod>()?.GetSettings<ThoughnessSkillSetting
 				num = 1f - num2 * (float)(level - (int)Settings.breakpoint);
 			}
 			float num3 = num;
-			__result = __result + "\n\n<b>Current Effects:</b>\n" + $"• Incoming Damage: x{num:0.00}\n" + $"• Bleed Rate: x{num3:0.00}";
+
+            if (!Settings.patchColonists && ToughnessSkillMod.IsColonist(pawn))
+            {
+                num3 = 1f;
+                num = 1f;
+            }
+            if (!Settings.patchFriendlyPawns && ToughnessSkillMod.IsFriendlyPawn(pawn))
+            {
+                num3 = 1f;
+                num = 1f;
+            }
+            if (!Settings.patchHostilePawns && ToughnessSkillMod.IsHostilePawn(pawn))
+            {
+                num3 = 1f;
+                num = 1f;
+            }
+            if (!Settings.patchFriendlyPawns && ToughnessSkillMod.IsIndependentPawn(pawn))
+            {
+                num3 = 1f;
+                num = 1f;
+            }
+            __result = __result + "\n\n<b>Current Effects:</b>\n" + $"• Incoming Damage: x{num:0.00}\n" + $"• Bleed Rate: x{num3:0.00}";
 		}
 	}
 }

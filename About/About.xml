@@ -19,5 +19,6 @@
   </modDependencies>
 	<loadAfter>
 		<li>brrainz.harmony</li>
+		<li>vanillaexpanded.vanillasocialinteractionsexpanded</li>
 	</loadAfter>
 </ModMetaData>

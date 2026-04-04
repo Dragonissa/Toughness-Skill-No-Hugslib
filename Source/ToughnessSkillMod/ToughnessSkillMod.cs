@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using RimWorld;
 using System.Globalization;
+using System.Linq;
 using UnityEngine;
 using Verse;
 
@@ -8,7 +9,7 @@ namespace ToughnessSkillMod;
 
 public class ToughnessSkillMod : Mod
 {
-	public static ThoughnessSkillSettings settings;
+    public static ThoughnessSkillSettings settings;
     private static ThoughnessSkillSettings defaultSettings;
 
     private string baseXpBuffer = "";
@@ -43,7 +44,7 @@ public class ToughnessSkillMod : Mod
 
     public override string SettingsCategory()
     {
-		return "Thoughness Skill";
+        return "Thoughness Skill";
     }
 
     public override void DoSettingsWindowContents(Rect inRect)
@@ -121,6 +122,18 @@ public class ToughnessSkillMod : Mod
 
         listingStandard.Gap();
 
+        listingStandard.CheckboxLabeled("Allow Toughness for Colonists", ref settings.patchColonists, "Allows the skill on Colonists");
+
+        listingStandard.Gap();
+
+        listingStandard.CheckboxLabeled("Allow Toughness for friendly Pawns", ref settings.patchFriendlyPawns, "Allows the skill on friendly Pawns");
+
+        listingStandard.Gap();
+
+        listingStandard.CheckboxLabeled("Allow Toughness for hostile Pawns", ref settings.patchHostilePawns, "Allows the skill on hostile Pawns");
+
+        listingStandard.Gap();
+
         // Centered Reset to defaults button
         Rect buttonRow = listingStandard.GetRect(Text.LineHeight);
         string resetLabel = "Reset to defaults";
@@ -135,11 +148,14 @@ public class ToughnessSkillMod : Mod
             settings.breakpoint = defaultSettings.breakpoint;
             settings.slopeEarly = defaultSettings.slopeEarly;
             settings.maxReduction = defaultSettings.maxReduction;
+            settings.patchColonists = defaultSettings.patchColonists;
+            settings.patchFriendlyPawns = defaultSettings.patchFriendlyPawns;
+            settings.patchHostilePawns = defaultSettings.patchHostilePawns;
 
             baseXpBuffer = settings.baseXp.ToString(CultureInfo.InvariantCulture);
             breakpointBuffer = settings.breakpoint.ToString(CultureInfo.InvariantCulture);
-            slopeEarlyBuffer = settings.slopeEarly.ToString(CultureInfo.InvariantCulture);  
-            maxReductionBuffer = settings.maxReduction.ToString(CultureInfo.InvariantCulture);  
+            slopeEarlyBuffer = settings.slopeEarly.ToString(CultureInfo.InvariantCulture);
+            maxReductionBuffer = settings.maxReduction.ToString(CultureInfo.InvariantCulture);
 
             WriteSettings();
         }
@@ -148,15 +164,15 @@ public class ToughnessSkillMod : Mod
         base.DoSettingsWindowContents(inRect);
     }
 
-	public override void WriteSettings()
-	{
+    public override void WriteSettings()
+    {
         settings.baseXp = ParseOrDefault(baseXpBuffer, defaultSettings.baseXp, settings.baseXp, out baseXpBuffer);
         settings.breakpoint = (int)ParseOrDefault(breakpointBuffer, defaultSettings.breakpoint, settings.breakpoint, out breakpointBuffer);
         settings.slopeEarly = ParseOrDefault(slopeEarlyBuffer, defaultSettings.slopeEarly, settings.slopeEarly, out slopeEarlyBuffer);
         settings.maxReduction = ParseOrDefault(maxReductionBuffer, defaultSettings.maxReduction, settings.maxReduction, out maxReductionBuffer);
 
         base.WriteSettings();
-        RefreshCaches();
+        LongEventHandler.ExecuteWhenFinished(RefreshCaches);
     }
 
     private float ParseOrDefault(string buffer, float defaultValue, float currentValue, out string newBuffer)
@@ -167,7 +183,7 @@ public class ToughnessSkillMod : Mod
             newBuffer = defaultValue.ToString(CultureInfo.InvariantCulture);
             if (printDebugMessage)
             {
-                    Log.Message($"[ToughnessSkillMod] Empty input, using default {defaultValue}");
+                Log.Message($"[ToughnessSkillMod] Empty input, using default {defaultValue}");
             }
             return defaultValue;
         }
@@ -189,10 +205,28 @@ public class ToughnessSkillMod : Mod
     }
 
     private static void RefreshCaches()
-	{
-		foreach (Pawn item in PawnsFinder.AllMapsCaravansAndTravellingTransporters_Alive)
-		{
-			item.TryGetComp<CompToughnessCache>()?.UpdateCache(item);
-		}
-	}
+    {
+        foreach (Pawn pawn in PawnsFinder.AllMapsCaravansAndTravellingTransporters_Alive.Where(p => p != null && p.RaceProps?.Humanlike == true))
+        {
+            pawn.TryGetComp<CompToughnessCache>()?.UpdateCache(pawn, true);
+        }
+    }
+
+    public static bool IsColonist(Pawn pawn)
+    {
+        return pawn.Faction != null && pawn.Faction.IsPlayer;
+    }
+
+    public static bool IsFriendlyPawn(Pawn pawn)
+    {
+        return pawn.Faction != null && !pawn.Faction.HostileTo(Faction.OfPlayer) && !pawn.Faction.IsPlayer;
+    }
+    public static bool IsHostilePawn(Pawn pawn)
+    {
+        return pawn.Faction != null && pawn.Faction.HostileTo(Faction.OfPlayer) && !pawn.Faction.IsPlayer;
+    }
+    public static bool IsIndependentPawn(Pawn pawn)
+    {
+        return pawn.Faction == null;
+    }
 }

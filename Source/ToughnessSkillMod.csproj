@@ -23,6 +23,9 @@
 		<Reference Include="Assembly-CSharp">
 		  <HintPath>D:\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
 		</Reference>
+		<Reference Include="CharacterEditor">
+		  <HintPath>D:\SteamLibrary\steamapps\workshop\content\294100\1874644848\v1.6\Assemblies\CharacterEditor.dll</HintPath>
+		</Reference>
 		<Reference Include="System.Core" />
 		<Reference Include="UnityEngine.CoreModule">
 		  <HintPath>D:\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>

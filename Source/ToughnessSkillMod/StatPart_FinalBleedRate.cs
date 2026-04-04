@@ -29,8 +29,8 @@ public class StatPart_FinalBleedRate : StatPart
 		CompToughnessCache compToughnessCache = pawn.TryGetComp<CompToughnessCache>();
 		if (compToughnessCache != null)
 		{
-			compToughnessCache.UpdateCache(pawn);
-			num *= compToughnessCache.cachedBleedFactor;
+			compToughnessCache.UpdateCache(pawn, false);
+            num *= compToughnessCache.cachedBleedFactor;
 		}
 		val *= num;
 	}

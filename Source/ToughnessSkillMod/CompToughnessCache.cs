@@ -1,5 +1,6 @@
-using System.Linq;
 using RimWorld;
+using RimWorld.Planet;
+using System.Linq;
 using Verse;
 
 namespace ToughnessSkillMod;
@@ -12,32 +13,36 @@ public class CompToughnessCache : ThingComp
 
 	public float cachedBleedFactor = 1f;
 
+    public bool skillDisabled = false;
+    public bool compintitialised = false;
+
     private static ThoughnessSkillSettings Settings =>
         LoadedModManager.GetMod<ToughnessSkillMod>()?.GetSettings<ThoughnessSkillSettings>() ?? ToughnessSkillMod.settings;
 
-    public void UpdateCache(Pawn pawn)
+	public void UpdateCache(Pawn pawn, bool skillDisablesChanged)
 	{
 		SkillRecord skillRecord = pawn.skills?.GetSkill(DefDatabase<SkillDef>.GetNamed("Toughness", errorOnFail: false));
-		if (skillRecord != null && skillRecord.Level != lastLevel)
-		{
-			lastLevel = skillRecord.Level;
-			if (lastLevel <= (int)Settings.breakpoint)
+
+        if (skillDisablesChanged)
+        {
+			skillRecord.Notify_SkillDisablesChanged();
+            Log.Message($"[Toughness] Skill disable state changed for {pawn.NameShortColored}. Totally disabled: {skillRecord?.TotallyDisabled}. Updating cache. Previous skillDisabled: {skillDisabled}");
+            if (skillRecord.TotallyDisabled)
 			{
-				cachedDamageFactor = 1f + (float)Settings.slopeEarly * (float)((int)Settings.breakpoint - lastLevel);
+				skillDisabled = true;
+				CalculateCachedFactors(pawn, skillRecord);
 			}
 			else
 			{
-				float num = (float)Settings.maxReduction / (20f - (float)(int)Settings.breakpoint);
-				cachedDamageFactor = 1f - num * (float)(lastLevel - (int)Settings.breakpoint);
+				skillDisabled = false;
+				lastLevel = -1;
 			}
-			if (lastLevel <= 5)
-			{
-				cachedBleedFactor = 1f + (float)Settings.slopeEarly * (float)((int)Settings.breakpoint - lastLevel);
-				return;
-			}
-			float num2 = (float)Settings.maxReduction / (20f - (float)(int)Settings.breakpoint);
-			cachedBleedFactor = 1f - num2 * (float)(lastLevel - (int)Settings.breakpoint);
 		}
+
+        if (skillRecord != null && skillRecord.Level != lastLevel)
+		{
+            CalculateCachedFactors(pawn, skillRecord);
+		} 
 	}
 
 	public void NotifyDamageApplied(DamageInfo dinfo, float totalDamageDealt, Pawn pawn)
@@ -88,7 +93,7 @@ public class CompToughnessCache : ThingComp
 		skill.Learn(num5);
 		if (Prefs.DevMode && (bool)Settings.debugMode)
 		{
-			Log.Message($"[ToughnessSkillMod] {pawn.NameShortColored} took {amount:0.##} raw damage, reduced to {totalDamageDealt:0.##}. XP granted: {num5:0.##} (x{num2:0.##}). Base XP: {Settings.baseXp:0.##}");
+			Log.Message($"[Toughness] {pawn.NameShortColored} took {amount:0.##} raw damage, reduced to {totalDamageDealt:0.##}. XP granted: {num5:0.##} (x{num2:0.##}). Base XP: {Settings.baseXp:0.##}");
 		}
 	}
 
@@ -161,4 +166,66 @@ public class CompToughnessCache : ThingComp
 			Log.Message($"[Toughness] {pawn.Name} downed in combat! Awarding {num5} XP.");
 		}
 	}
+
+	private void CalculateCachedFactors(Pawn pawn, SkillRecord skillRecord)
+	{
+        lastLevel = skillRecord.Level;
+        if (skillRecord.TotallyDisabled)
+		{
+			cachedBleedFactor = 1f;
+			cachedDamageFactor = 1f;
+            return;
+        }
+
+        if (lastLevel <= (int)Settings.breakpoint)
+        {
+            cachedDamageFactor = 1f + (float)Settings.slopeEarly * (float)((int)Settings.breakpoint - lastLevel);
+        }
+        else
+        {
+            float num = (float)Settings.maxReduction / (20f - (float)(int)Settings.breakpoint);
+            cachedDamageFactor = 1f - num * (float)(lastLevel - (int)Settings.breakpoint);
+        }
+        if (lastLevel <= 5)
+        {
+            cachedBleedFactor = 1f + (float)Settings.slopeEarly * (float)((int)Settings.breakpoint - lastLevel);
+            return;
+        }
+        float num2 = (float)Settings.maxReduction / (20f - (float)(int)Settings.breakpoint);
+        cachedBleedFactor = 1f - num2 * (float)(lastLevel - (int)Settings.breakpoint);
+    }
+
+	public void InitialiseComp(Pawn pawn, CompToughnessCache comp, SkillRecord skill)
+	{
+        if (!comp.compintitialised)
+        {
+            comp.compintitialised = true;
+            skill.Notify_SkillDisablesChanged();
+
+            if (skill.TotallyDisabled)
+            {
+                comp.cachedBleedFactor = 1f;
+                comp.cachedDamageFactor = 1f;
+                comp.skillDisabled = true;
+            }
+
+			if (Prefs.DevMode && (bool)Settings.debugMode)
+			{
+				Log.Message($"[Toughness] Initialised toughness cache for {pawn.NameShortColored}. Skill disabled: {comp.skillDisabled}. Cached damage factor: {comp.cachedDamageFactor:0.##}. Cached bleed factor: {comp.cachedBleedFactor:0.##}");
+            }
+        }
+    }
+
+    public override void PostExposeData()
+    {
+		base.PostExposeData();
+
+        Scribe_Values.Look(ref lastLevel, "lastLevel", -1);
+        Scribe_Values.Look(ref cachedDamageFactor, "cachedDamageFactor", 1f);
+        Scribe_Values.Look(ref cachedBleedFactor, "cachedBleedFactor", 1f);
+
+        Scribe_Values.Look(ref skillDisabled, "skillDisabled", false);
+        Scribe_Values.Look(ref compintitialised, "compintitialised", false);
+    }
+
 }
