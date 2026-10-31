@@ -1,6 +1,12 @@
 <Patch>
   <Operation Class="PatchOperationAdd">
-    <xpath>Defs/ThingDef[defName="Human"]/comps</xpath>
+    <xpath>Defs/ThingDef[race/intelligence="Humanlike"]/comps</xpath>
+      <value>
+      <li Class="ToughnessSkillMod.CompProperties_ToughnessCache" />
+    </value>
+  </Operation>
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/AlienRace.ThingDef_AlienRace[race/intelligence="Humanlike"]/comps</xpath>
       <value>
       <li Class="ToughnessSkillMod.CompProperties_ToughnessCache" />
     </value>
