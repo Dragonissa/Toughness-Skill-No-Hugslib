@@ -37,11 +37,18 @@ LoadedModManager.GetMod<ToughnessSkillMod>()?.GetSettings<ThoughnessSkillSetting
                     skill.xpSinceLastLevel = 0f;
 
                     CompToughnessCache comp = pawn.TryGetComp<CompToughnessCache>();
-                    comp?.InitialiseComp(pawn, comp, skill);
 
-                    if (Prefs.DevMode && Settings.debugMode)
+                    if (comp == null)
                     {
-                        Log.Message($"[Toughness] Init {pawn.LabelShortCap} → Toughness {skill.levelInt}");
+                        Log.Warning($"[Toughness] {pawn.LabelShortCap} with Race {pawn.def.defName} has no CompToughnessCache. Report this to the mod creator");
+                    } 
+                    else 
+                    { 
+                        comp.InitialiseComp(pawn, comp, skill);
+                        if (Prefs.DevMode && Settings.debugMode)
+                        {
+                            Log.Message($"[Toughness] Init {pawn.LabelShortCap} → Toughness {skill.levelInt}");
+                        }
                     }
                 }
             }

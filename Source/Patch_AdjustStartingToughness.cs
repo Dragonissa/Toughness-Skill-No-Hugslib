@@ -42,14 +42,21 @@ public static class Patch_AdjustStartingToughness
 			skill.xpSinceLastLevel = 0f;
 
             CompToughnessCache comp = pawn.TryGetComp<CompToughnessCache>();
-            comp?.InitialiseComp(pawn, comp, skill);
 
-            comp?.UpdateCache(pawn, true);
+			if (comp == null)
+			{
+				Log.Warning($"[Toughness] {pawn.LabelShortCap} with Race {pawn.def.defName} has no CompToughnessCache. Report this to the mod creator");
+			}
+			else
+			{
+				comp.InitialiseComp(pawn, comp, skill);
+				comp.UpdateCache(pawn, true);
 
-            if (Prefs.DevMode && (bool)Settings.debugMode)
-            {
-                Log.Message($"[Toughness] {pawn.Name} generated with Toughness {skill.levelInt}.");
-            }
+				if (Prefs.DevMode && (bool)Settings.debugMode)
+				{
+					Log.Message($"[Toughness] {pawn.Name} generated with Toughness {skill.levelInt}.");
+				}
+			}
         }
 	}
 
