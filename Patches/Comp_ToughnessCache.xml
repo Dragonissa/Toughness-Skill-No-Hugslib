@@ -5,10 +5,15 @@
       <li Class="ToughnessSkillMod.CompProperties_ToughnessCache" />
     </value>
   </Operation>
-  <Operation Class="PatchOperationAdd">
-    <xpath>Defs/AlienRace.ThingDef_AlienRace[race/intelligence="Humanlike"]/comps</xpath>
-      <value>
-      <li Class="ToughnessSkillMod.CompProperties_ToughnessCache" />
-    </value>
+	<Operation Class="PatchOperationFindMod">
+		<mods>
+			<li>Humanoid Alien Races</li>
+		</mods>
+		<match Class="PatchOperationAdd">
+      <xpath>Defs/AlienRace.ThingDef_AlienRace[race/intelligence="Humanlike"]/comps</xpath>
+        <value>
+          <li Class="ToughnessSkillMod.CompProperties_ToughnessCache" />
+        </value>
+    </match>
   </Operation>
 </Patch>
