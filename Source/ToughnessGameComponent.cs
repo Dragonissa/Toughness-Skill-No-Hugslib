@@ -40,7 +40,7 @@ LoadedModManager.GetMod<ToughnessSkillMod>()?.GetSettings<ThoughnessSkillSetting
 
                     if (comp == null)
                     {
-                        Log.Warning($"[Toughness] {pawn.LabelShortCap} with Race {pawn.def.defName} has no CompToughnessCache. Report this to the mod creator");
+                        Log.Warning($"[Toughness] {pawn.LabelShortCap} with Race '{pawn.def.defName}' has no CompToughnessCache. This shouldnt happen. Report this to the mod creator");
                     } 
                     else 
                     { 

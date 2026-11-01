@@ -208,7 +208,15 @@ public class ToughnessSkillMod : Mod
     {
         foreach (Pawn pawn in PawnsFinder.AllMapsCaravansAndTravellingTransporters_Alive.Where(p => p != null && p.RaceProps?.Humanlike == true))
         {
-            pawn.TryGetComp<CompToughnessCache>()?.UpdateCache(pawn, true);
+            CompToughnessCache comp = pawn.TryGetComp<CompToughnessCache>();
+            if (comp == null)
+            {
+                Log.Warning($"[Toughness] {pawn.LabelShortCap} with Race '{pawn.def.defName}' has no CompToughnessCache. This shouldnt happen. Report this to the mod creator");
+            }
+            else
+            {
+                comp.UpdateCache(pawn, true);
+            }
         }
     }
 
