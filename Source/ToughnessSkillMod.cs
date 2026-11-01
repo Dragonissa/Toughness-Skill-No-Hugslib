@@ -55,7 +55,7 @@ public class ToughnessSkillMod : Mod
         float labelPct = 0.60f;
         float spacing = 0.75f;
 
-        // --- Base XP: single-line label + numeric text field with tooltip ---
+        // Base XP
         Rect row = listingStandard.GetRect(Text.LineHeight);
         Rect labelRect = new Rect(row.x, row.y, row.width * labelPct, row.height);
         Rect fieldRect = new Rect(row.x + labelRect.width + spacing, row.y, row.width - labelRect.width - spacing, row.height);
@@ -66,11 +66,7 @@ public class ToughnessSkillMod : Mod
 
         listingStandard.Gap();
 
-        // Debug mode
-        listingStandard.CheckboxLabeled("DebugMode", ref settings.debugMode, "Extra logging in the console when Dev Mode is on.");
-        listingStandard.Gap();
-
-        // --- Breakpoint level: single-line label + manual ± control with editable number ---
+        // Breakpoint level
         Rect row2 = listingStandard.GetRect(Text.LineHeight);
         Rect labelRect2 = new Rect(row2.x, row2.y, row2.width * labelPct, row2.height);
         Rect fieldRect2 = new Rect(row2.x + labelRect2.width + spacing, row2.y, row2.width - labelRect2.width - spacing, row2.height);
@@ -78,7 +74,9 @@ public class ToughnessSkillMod : Mod
         Widgets.Label(labelRect2, "Breakpoint level");
         TooltipHandler.TipRegion(labelRect2, "Levels ≤ breakpoint use the first slope; above it, the second part.");
 
-        // Manual compact IntAdjuster: minus button, editable value, plus button
+        listingStandard.Gap();
+
+        // Manual compact IntAdjuster
         float btnWidth = 28f;
         float innerSpacing = 4f;
         Rect minusRect = new Rect(fieldRect2.x, fieldRect2.y, btnWidth, fieldRect2.height);
@@ -100,7 +98,7 @@ public class ToughnessSkillMod : Mod
 
         listingStandard.Gap();
 
-        // --- Early-level slope: single-line label + numeric text field with tooltip ---
+        // Early-level slope
         Rect row3 = listingStandard.GetRect(Text.LineHeight);
         Rect labelRect3 = new Rect(row3.x, row3.y, row3.width * labelPct, row3.height);
         Rect fieldRect3 = new Rect(row3.x + labelRect3.width + spacing, row3.y, row3.width - labelRect3.width - spacing, row3.height);
@@ -111,7 +109,7 @@ public class ToughnessSkillMod : Mod
 
         listingStandard.Gap();
 
-        // --- Max reduction at level: single-line label + numeric text field with tooltip ---
+        // Max reduction at level
         Rect row4 = listingStandard.GetRect(Text.LineHeight);
         Rect labelRect4 = new Rect(row4.x, row4.y, row4.width * labelPct, row4.height);
         Rect fieldRect4 = new Rect(row4.x + labelRect4.width + spacing, row4.y, row4.width - labelRect4.width - spacing, row4.height);
@@ -132,6 +130,10 @@ public class ToughnessSkillMod : Mod
 
         listingStandard.CheckboxLabeled("Allow Toughness for hostile Pawns", ref settings.patchHostilePawns, "Allows the skill on hostile Pawns");
 
+        listingStandard.GapLine();
+
+        // Debug mode
+        listingStandard.CheckboxLabeled("DebugMode", ref settings.debugMode, "Extra logging in the console when Dev Mode is on.");
         listingStandard.Gap();
 
         // Centered Reset to defaults button
