@@ -10,5 +10,5 @@ Original Mod: https://steamcommunity.com/sharedfiles/filedetails/?id=3448693012
 I will take this down if the Mod Author says so.
 
 <p align="center">
-  <img src="About/review.png" width="800">
+  <img src="About/preview.png" width="800">
 </p>
