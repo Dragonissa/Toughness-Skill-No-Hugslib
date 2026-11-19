@@ -3,21 +3,22 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 
-namespace ToughnessSkillMod;
-
-[StaticConstructorOnStartup]
-public static class PatchPawnCardSize
+namespace ToughnessSkillMod
 {
-	static PatchPawnCardSize()
+	[StaticConstructorOnStartup]
+	public static class PatchPawnCardSize
 	{
-		new Harmony("tyinplop.ToughnessSkillMod").Patch(AccessTools.Method(typeof(CharacterCardUtility), "PawnCardSize"), null, new HarmonyMethod(typeof(PatchPawnCardSize), "AddOneRow"));
-	}
-
-	public static void AddOneRow(ref Vector2 __result)
-	{
-		if (__result.y >= 392f)
+		static PatchPawnCardSize()
 		{
-			__result.y += 24f;
+			new Harmony("tyinplop.ToughnessSkillMod").Patch(AccessTools.Method(typeof(CharacterCardUtility), "PawnCardSize"), null, new HarmonyMethod(typeof(PatchPawnCardSize), "AddOneRow"));
+		}
+
+		public static void AddOneRow(ref Vector2 __result)
+		{
+			if (__result.y >= 392f)
+			{
+				__result.y += 24f;
+			}
 		}
 	}
 }

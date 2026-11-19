@@ -1,15 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>ToughnessSkillMod</AssemblyName>
-    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
-    <TargetFramework>net472</TargetFramework>
-  </PropertyGroup>
-  <PropertyGroup>
-    <LangVersion>12.0</LangVersion>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <TargetFramework>net4.7.2</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -36,15 +28,7 @@
     </Reference>
   </ItemGroup>
 
-  <!-- Path to copy the final DLL to -->
-  <PropertyGroup>
-    <RimWorldModsAssemblies>E:\SteamLibrary\steamapps\common\RimWorld\Mods\Thoughness Skill\Assemblies\</RimWorldModsAssemblies>
-  </PropertyGroup>
-
-  <!-- Copy the built DLL to the RimWorld Mods Assemblies folder after build -->
-  <Target Name="CopyToRimWorldAssemblies" AfterTargets="Build">
-    <Message Text="Copying $(TargetPath) to $(RimWorldModsAssemblies)" Importance="High" />
-    <MakeDir Directories="$(RimWorldModsAssemblies)" Condition="!Exists('$(RimWorldModsAssemblies)')" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(RimWorldModsAssemblies)" SkipUnchangedFiles="true" />
-  </Target>
+	<Target Name="CopyToRimWorldAssemblies" AfterTargets="Build">
+		<Exec Command='powershell -ExecutionPolicy Bypass -NoProfile -File "$(ProjectDir)Deploy-RimWorldMod.ps1" -SourceDll "$(TargetPath)" -ModName "$(AssemblyName)"' />
+	</Target>
 </Project>

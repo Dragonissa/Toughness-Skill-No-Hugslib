@@ -1,11 +1,12 @@
 using Verse;
 
-namespace ToughnessSkillMod;
-
-public class CompProperties_ToughnessCache : CompProperties
+namespace ToughnessSkillMod
 {
-	public CompProperties_ToughnessCache()
-	{
-		compClass = typeof(CompToughnessCache);
-	}
+    public class CompProperties_ToughnessCache : CompProperties
+    {
+        public CompProperties_ToughnessCache()
+        {
+            compClass = typeof(CompToughnessCache);
+        }
+    }
 }

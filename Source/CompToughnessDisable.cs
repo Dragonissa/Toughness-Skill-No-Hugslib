@@ -1,28 +1,29 @@
 ﻿using RimWorld;
 using Verse;
 
-namespace ToughnessSkillMod;
-public class ToughnessInitComponent : GameComponent
-{
-    private bool initialized = false;
-
-    public ToughnessInitComponent(Game game) { }
-
-    public override void GameComponentTick()
+namespace ToughnessSkillMod { 
+    public class ToughnessInitComponent : GameComponent
     {
-        if (initialized)
-            return;
+        private bool initialized = false;
 
-        if (Current.ProgramState != ProgramState.Playing)
-            return;
+        public ToughnessInitComponent(Game game) { }
 
-        if (Faction.OfPlayer == null)
-            return;
+        public override void GameComponentTick()
+        {
+            if (initialized)
+                return;
 
-        if (Find.CurrentMap == null)
-            return;
+            if (Current.ProgramState != ProgramState.Playing)
+                return;
 
-        initialized = true;
-        ToughnessSkillMod.RefreshCaches();
+            if (Faction.OfPlayer == null)
+                return;
+
+            if (Find.CurrentMap == null)
+                return;
+
+            initialized = true;
+            ToughnessSkillMod.RefreshCaches();
+        }
     }
 }

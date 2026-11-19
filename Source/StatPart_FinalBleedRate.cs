@@ -3,77 +3,78 @@ using System.Text;
 using RimWorld;
 using Verse;
 
-namespace ToughnessSkillMod;
-
-public class StatPart_FinalBleedRate : StatPart
+namespace ToughnessSkillMod
 {
-	public override void TransformValue(StatRequest req, ref float val)
+	public class StatPart_FinalBleedRate : StatPart
 	{
-		if (!req.HasThing || !(req.Thing is Pawn pawn))
+		public override void TransformValue(StatRequest req, ref float val)
 		{
-			return;
-		}
-		float num = 1f;
-		List<Hediff> list = pawn.health?.hediffSet?.hediffs;
-		if (list != null)
-		{
-			foreach (Hediff item in list)
+			if (!req.HasThing || !(req.Thing is Pawn pawn))
 			{
-				HediffStage hediffStage = item?.CurStage;
-				if (hediffStage != null && hediffStage.totalBleedFactor != 1f)
+				return;
+			}
+			float num = 1f;
+			List<Hediff> list = pawn.health?.hediffSet?.hediffs;
+			if (list != null)
+			{
+				foreach (Hediff item in list)
 				{
-					num *= hediffStage.totalBleedFactor;
+					HediffStage hediffStage = item?.CurStage;
+					if (hediffStage != null && hediffStage.totalBleedFactor != 1f)
+					{
+						num *= hediffStage.totalBleedFactor;
+					}
 				}
 			}
+			CompToughnessCache compToughnessCache = pawn.TryGetComp<CompToughnessCache>();
+			if (compToughnessCache != null)
+			{
+				compToughnessCache.UpdateCache(pawn, false);
+				num *= compToughnessCache.cachedBleedFactor;
+			}
+			val *= num;
 		}
-		CompToughnessCache compToughnessCache = pawn.TryGetComp<CompToughnessCache>();
-		if (compToughnessCache != null)
-		{
-			compToughnessCache.UpdateCache(pawn, false);
-            num *= compToughnessCache.cachedBleedFactor;
-		}
-		val *= num;
-	}
 
-	public override string ExplanationPart(StatRequest req)
-	{
-		if (!req.HasThing || !(req.Thing is Pawn pawn))
+		public override string ExplanationPart(StatRequest req)
 		{
-			return null;
-		}
-		StringBuilder stringBuilder = new StringBuilder();
-		float num = 1f;
-		List<Hediff> list = pawn.health?.hediffSet?.hediffs;
-		if (list != null)
-		{
-			foreach (Hediff item in list)
+			if (!req.HasThing || !(req.Thing is Pawn pawn))
 			{
-				HediffStage hediffStage = item?.CurStage;
-				if (hediffStage != null && hediffStage.totalBleedFactor != 1f)
+				return null;
+			}
+			StringBuilder stringBuilder = new StringBuilder();
+			float num = 1f;
+			List<Hediff> list = pawn.health?.hediffSet?.hediffs;
+			if (list != null)
+			{
+				foreach (Hediff item in list)
 				{
-					num *= hediffStage.totalBleedFactor;
-					stringBuilder.AppendLine((item.def?.label ?? item.Label) + ": x" + hediffStage.totalBleedFactor.ToStringPercent());
+					HediffStage hediffStage = item?.CurStage;
+					if (hediffStage != null && hediffStage.totalBleedFactor != 1f)
+					{
+						num *= hediffStage.totalBleedFactor;
+						stringBuilder.AppendLine((item.def?.label ?? item.Label) + ": x" + hediffStage.totalBleedFactor.ToStringPercent());
+					}
 				}
 			}
-		}
-		CompToughnessCache compToughnessCache = pawn.TryGetComp<CompToughnessCache>();
-		if (compToughnessCache != null)
-		{
-			float cachedBleedFactor = compToughnessCache.cachedBleedFactor;
-			if (cachedBleedFactor != 1f)
+			CompToughnessCache compToughnessCache = pawn.TryGetComp<CompToughnessCache>();
+			if (compToughnessCache != null)
 			{
-				stringBuilder.AppendLine("Toughness skill: x" + cachedBleedFactor.ToStringPercent());
-				num *= cachedBleedFactor;
+				float cachedBleedFactor = compToughnessCache.cachedBleedFactor;
+				if (cachedBleedFactor != 1f)
+				{
+					stringBuilder.AppendLine("Toughness skill: x" + cachedBleedFactor.ToStringPercent());
+					num *= cachedBleedFactor;
+				}
 			}
+			if (num != 1f)
+			{
+				stringBuilder.AppendLine("Final: x" + num.ToStringPercent());
+			}
+			if (num == 1f)
+			{
+				return null;
+			}
+			return stringBuilder.ToString().Trim();
 		}
-		if (num != 1f)
-		{
-			stringBuilder.AppendLine("Final: x" + num.ToStringPercent());
-		}
-		if (num == 1f)
-		{
-			return null;
-		}
-		return stringBuilder.ToString().Trim();
 	}
 }
